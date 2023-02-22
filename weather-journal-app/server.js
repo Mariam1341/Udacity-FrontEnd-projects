@@ -24,16 +24,17 @@ app.get('/getData', (req, res) => {
   res.status(200).send(projectData);
 });
 
-app.post('/postData', addData);
-
-function addData(req, res) {
-  console.log('addData', req.body)
+const addData = (req, res) =>{
+  // console.log('addData', req.body.temperature)
   projectData.temperature = req.body.temperature;
   projectData.date = req.body.date;
   projectData.userResponse = req.body.userResponse;
-  // may not wright
   res.status(200).send(projectData);
+  // console.log(projectData)
 }
+
+app.post('/postData', addData);
+
 
 let PORT = 5501
 // make the server listen to requests
