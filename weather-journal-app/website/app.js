@@ -4,27 +4,28 @@
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
+let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
+const apikey = '&appid=bd7ce34fdd5c68428a7d57c4724c69f0&units=metric'
 
 // Personal API Key for OpenWeatherMap API
 
 // Event listener to add function to existing HTML DOM element
 
 /* Function called by event listener */
-const Generate = async ()=>{  
+const Generate = async () => {
   let data = getData()
-  getData().then(postData(data))   
+  getData().then(postData(data))
 }
-const getData = async ()=>{ 
+const getData = async () => {
   let zip = document.getElementById("zip").value;
-  const request = await fetch(`http://api.openweathermap.org/data/2.5/weather?zip=${zip},&appid=bd7ce34fdd5c68428a7d57c4724c69f0&units=metric`)
+  const request = await fetch(`http://api.openweathermap.org/data/2.5/weather?zip=${zip},${apikey}`)
   const datao = await request.json();
   return datao;
 }
 
 document.getElementById("generate").addEventListener("click", Generate);
 
-async function postData (data){
+async function postData(data) {
   let res = await fetch('http://localhost:5501/postData', {
     method: 'POST',
     headers: {
@@ -32,17 +33,17 @@ async function postData (data){
     },
     body: JSON.stringify(data)
   });
-  if(res.ok){
+  if (res.ok) {
     let resp = await fetch('http://localhost:5501/getData');
     let dataa = await resp.json();
     document.querySelector('#temp').innerText = dataa.temperature;
     document.querySelector('#date').innerText = dataa.date;
     document.querySelector('#content').innerText = dataa.feelings;
     console.log(dataa)
-  }else{
+  } else {
     console.log("error")
   }
-    document.querySelector('.entry').style.visibility = "visible";
+  document.querySelector('.entry').style.visibility = "visible";
 }
 
 /* Function to GET Project Data */
