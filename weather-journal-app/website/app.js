@@ -1,49 +1,39 @@
 /* Global Variables */
-// //&appid=
-// const apikey ='bd7ce34fdd5c68428a7d57c4724c69f0'
 
-// Create a new date instance dynamically with JS
 let d = new Date();
 let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
-const apikey = '&appid=bd7ce34fdd5c68428a7d57c4724c69f0&units=metric'
+const apiKey = '&appid=bd7ce34fdd5c68428a7d57c4724c69f0&units=metric'
 
-// Personal API Key for OpenWeatherMap API
-
-// Event listener to add function to existing HTML DOM element
-
-/* Function called by event listener */
 const Generate = async () => {
-  let data = getData()
-  getData().then(postData(data))
+  
+  getData().then((data) =>{
+    console.log("data",data)
+    let feelings = document.getElementById("feelings").value;
+   postData({date:newDate, temp:data.list[0].main.temp , content:feelings})
+  })
 }
-const getData = async () => {
+async function getData(){
   let zip = document.getElementById("zip").value;
-  const request = await fetch(`http://api.openweathermap.org/data/2.5/weather?zip=${zip},${apikey}`)
-  const datao = await request.json();
-  return datao;
+  const request = await fetch(`http://api.openweathermap.org/data/2.5/forecast?zip=${zip},${apiKey}`)
+  const data = await request.json();
+  return data;
 }
 
 document.getElementById("generate").addEventListener("click", Generate);
 
-async function postData(data) {
+async function postData(information = {}) {
   let res = await fetch('http://localhost:5501/postData', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(information)
   });
-  if (res.ok) {
+  document.querySelector('#temp').innerText = `TEMP : ${information.temp}`;
+  document.querySelector('#date').innerText = `DATE : ${information.date}`;
+  document.querySelector('#content').innerText = `FEELINGS : ${information.content}`;
+
+  const newData = await res.json();
     let resp = await fetch('http://localhost:5501/getData');
     let dataa = await resp.json();
-    document.querySelector('#temp').innerText = dataa.temperature;
-    document.querySelector('#date').innerText = dataa.date;
-    document.querySelector('#content').innerText = dataa.feelings;
-    console.log(dataa)
-  } else {
-    console.log("error")
-  }
   document.querySelector('.entry').style.visibility = "visible";
 }
 
-/* Function to GET Project Data */
